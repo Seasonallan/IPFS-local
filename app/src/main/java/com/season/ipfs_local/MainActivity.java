@@ -1,16 +1,25 @@
 package com.season.ipfs_local;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+
+import com.season.ipfs.IPFSRequest;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,14 +29,10 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import io.ipfs.kotlin.IPFS;
-import io.ipfs.kotlin.IPFSConfiguration;
-import io.ipfs.kotlin.model.NamedHash;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    IPFS ipfs;
     TextView textView;
     ScrollView scrollView;
 
@@ -38,8 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
         textView = findViewById(R.id.text);
         scrollView = findViewById(R.id.scroll);
-
-        ipfs = new IPFS(new IPFSConfiguration());
 
 
         findViewById(R.id.button_init).setOnClickListener(new View.OnClickListener() {
@@ -69,7 +72,18 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button_version).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            setText("ipfs id");
+                            String res = IPFSRequest.id();
+                            setText(new JSONObject(res).toString(2));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
             }
         });
         findViewById(R.id.button_add).setOnClickListener(new View.OnClickListener() {
@@ -79,9 +93,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            NamedHash res = ipfs.getAdd().string("hello", "string", "gogo");
-                            hash = res.getHash();
-                            setText(res.getHash() + ">> " + res.getName());
+                            setText("ipfs add test.txt");
+                            String res = IPFSRequest.uploadString(MainActivity.this, "can u see me? no");
+                            JSONObject jsonObject = new JSONObject(res);
+                            cid = jsonObject.getString("Hash");
+                            setText(jsonObject.toString(2));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -97,7 +113,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            String res = ipfs.getGet().cat(hash);
+                            setText("ipfs cat " + cid);
+                            String res = IPFSRequest.catString(cid);
                             setText(res);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -107,30 +124,63 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if(chatProcess == null){
-
-        }
         findViewById(R.id.button_pubsub).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setText("TT", "run ipfs pubsub sub helloMe");
-                        try {
-                            chatProcess = runCmd("pubsub sub helloMe");
-                            readOutput(chatProcess, 100);
-                        } catch (Exception e) {
-                            setText("TT", "ERROR");
-                            e.printStackTrace();
+                if (chatProcess == null) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setText("TT", "run ipfs pubsub sub helloMe");
+                            try {
+                                chatProcess = runCmd("pubsub sub helloMe");
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ((Button) findViewById(R.id.button_pubsub)).setText("发送消息");
+                                    }
+                                });
+                                readOutput(chatProcess, 100);
+                            } catch (Exception e) {
+                                setText("TT", "ERROR");
+                                e.printStackTrace();
+                            }
+                            chatProcess = null;
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ((Button) findViewById(R.id.button_pubsub)).setText("进入聊天室");
+                                }
+                            });
+
                         }
-                        chatProcess = null;
-                    }
-                }).start();
+                    }).start();
+                } else {
+                    final EditText inputServer = new EditText(MainActivity.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("消息").setIcon(android.R.drawable.ic_dialog_info).setView(inputServer)
+                            .setNegativeButton("取消", null);
+                    builder.setPositiveButton("发送", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+                            setText("TT", "run ipfs pubsub pub helloMe " + inputServer.getText().toString());
+                            try {
+                                chatProcess = runCmd("pubsub pub helloMe " + inputServer.getText().toString());
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
+                    builder.show();
+                }
             }
         });
 
     }
+
+    String cid = "QmcfkLDz2dsz5NwTLxwL2S8qJHMSFvgRRPwpXpZjxq3KAy";
     Process chatProcess;
 
     public void readOutput(Process process, long time) {
@@ -160,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (IllegalThreadStateException e) {
             isAlive = true;
         }
-        Log.e("TT", "isAlive:"+isAlive);
+        Log.e("TT", "isAlive:" + isAlive);
         return isAlive;
     }
 

@@ -1,2 +1,3 @@
 rootProject.name = "IPFS-local"
 include ':app'
+include ':library'
