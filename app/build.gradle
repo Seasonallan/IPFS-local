@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 28
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.season.ipfs_local"
         minSdkVersion 19
-        targetSdkVersion 30
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
@@ -35,10 +35,16 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-
     testImplementation "com.squareup.assertj:assertj-android:1.2.0"
-    implementation 'com.github.ligi:ipfs-api-kotlin:0.12'
-    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 
+
+    implementation 'com.github.ligi:ipfs-api-kotlin:0.15'
+
+//    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+//    compile 'com.google.code.gson:gson:2.6.2'
+//    implementation 'com.squareup.retrofit2:retrofit-converters:2.4.0'
+//    implementation 'com.squareup.retrofit2:retrofit-adapters:2.4.0'
+//    compile 'com.squareup.retrofit2:converter-gson:2.4.0'
+//    implementation project(':library')
 
 }

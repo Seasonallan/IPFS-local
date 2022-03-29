@@ -1,53 +1,50 @@
 package com.season.ipfs_local;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
-import java.io.BufferedReader;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.concurrent.TimeUnit;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import io.ipfs.kotlin.IPFS;
+import io.ipfs.kotlin.IPFSConfiguration;
 import io.ipfs.kotlin.model.NamedHash;
-import io.ipfs.kotlin.model.VersionInfo;
-import okhttp3.OkHttpClient;
+
 
 public class MainActivity extends AppCompatActivity {
 
     IPFS ipfs;
+    TextView textView;
+    ScrollView scrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(1000, TimeUnit.SECONDS)
-                .readTimeout(1000, TimeUnit.SECONDS)
-                .build();
+        textView = findViewById(R.id.text);
+        scrollView = findViewById(R.id.scroll);
 
-        ipfs = new IPFS("http://127.0.0.1:5001/api/v0/", okHttpClient);
+        ipfs = new IPFS(new IPFSConfiguration());
 
 
         findViewById(R.id.button_init).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isReady()) {
-                    Log.e("TT", "already exists");
-                    return;
-                }
                 download();
             }
         });
@@ -58,12 +55,10 @@ public class MainActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.e("TT", "run ipfs daemon");
+                        setText("TT", "ipfs daemon --enable-pubsub-experiment");
                         try {
                             daemon = runCmd("daemon --enable-pubsub-experiment");
-                            daemon.waitFor();
-                            String result = readStream(daemon.getInputStream()) + readStream(daemon.getErrorStream());
-                            Log.e("TT", result);
+                            readOutput(daemon, 500, "Daemon is ready");
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -74,17 +69,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button_version).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            VersionInfo versionInfo = ipfs.getInfo().version();
-                            Log.e("TT", versionInfo.getVersion());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+
             }
         });
         findViewById(R.id.button_add).setOnClickListener(new View.OnClickListener() {
@@ -94,9 +79,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            NamedHash res = ipfs.getAdd().string("hello world! 2022");
+                            NamedHash res = ipfs.getAdd().string("hello", "string", "gogo");
                             hash = res.getHash();
-                            Log.e("TT", res.getHash() + ">> " + res.getName());
+                            setText(res.getHash() + ">> " + res.getName());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -113,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             String res = ipfs.getGet().cat(hash);
-                            Log.e("TT", res);
+                            setText(res);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -121,44 +106,87 @@ public class MainActivity extends AppCompatActivity {
                 }).start();
             }
         });
+
+        if(chatProcess == null){
+
+        }
         findViewById(R.id.button_pubsub).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.e("TT", "run ipfs pubsub sub helloMe");
+                        setText("TT", "run ipfs pubsub sub helloMe");
                         try {
-                            Process process = runCmd("pubsub sub helloMe");
-
-                            Log.e("TT", "waitFor");
-                            new Thread() {
-                                public void run() {
-                                    while (true) {
-                                        String result = readStream(process.getInputStream()) + readStream(process.getErrorStream());
-                                        try {
-                                            Thread.sleep(5000);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        Log.e("TT", result);
-                                    }
-                                }
-                            }.start();
-                            process.waitFor();
-                            String result = readStream(process.getInputStream()) + readStream(process.getErrorStream());
-                            Log.e("TT", result);
-
-                            runCmd("pubsub pub helloMe \"hello, IPFS指南，飞向未来!\"");
+                            chatProcess = runCmd("pubsub sub helloMe");
+                            readOutput(chatProcess, 100);
                         } catch (Exception e) {
-                            Log.e("TT", "ERROR");
+                            setText("TT", "ERROR");
                             e.printStackTrace();
                         }
+                        chatProcess = null;
                     }
                 }).start();
             }
         });
 
+    }
+    Process chatProcess;
+
+    public void readOutput(Process process, long time) {
+        readOutput(process, time, null);
+    }
+
+    public void readOutput(Process process, long time, String keyBreak) {
+        while (isProcessAlive(process)) {
+            String result = readStream(process.getInputStream()) + readStream(process.getErrorStream());
+            try {
+                Thread.sleep(time);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            setText("TT", result);
+            if (!TextUtils.isEmpty(keyBreak) && result.contains(keyBreak)) {
+                return;
+            }
+        }
+    }
+
+    public boolean isProcessAlive(Process process) {
+        boolean isAlive;
+        try {
+            process.exitValue();
+            isAlive = false;
+        } catch (IllegalThreadStateException e) {
+            isAlive = true;
+        }
+        Log.e("TT", "isAlive:"+isAlive);
+        return isAlive;
+    }
+
+    public void setText(String tag, String text) {
+        setText(text);
+    }
+
+    public void setText(String text) {
+        if (TextUtils.isEmpty(text)) {
+            return;
+        }
+        Log.e("TT", text);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss #");// HH:mm:ss
+                Date date = new Date(System.currentTimeMillis());
+                textView.setText(textView.getText().toString() + "\n" + simpleDateFormat.format(date) + " " + text);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                    }
+                }, 300);
+            }
+        });
     }
 
     String hash;
@@ -173,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private File getBinaryFile() {
-        return new File(getFilesDir(), "ipfsbin");
+        return new File(getFilesDir(), "ipfs");
     }
 
     private File getRepoPath() {
@@ -190,38 +218,35 @@ public class MainActivity extends AppCompatActivity {
 
     private String getBinaryFileByABI(String abi) {
         if (abi.toLowerCase().startsWith("x86")) {
-            return "x86";
+            return "ipfs";
         }
-        return "arm";
+        return "ipfs-arm";
     }
 
     void download() {
-
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Copy IPFS binary");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
         new Thread(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void run() {
                 try {
                     downloadFile();
                     getBinaryFile().setExecutable(true);
+//                    try {
+//                        String command = "chmod 777 " + getBinaryFile().getAbsolutePath();
+//                        Log.i("zyl", "command = " + command);
+//                        Runtime.getRuntime().exec(command);
+//                    } catch (IOException e) {
+//                        Log.i("zyl", "chmod fail!!!!");
+//                        e.printStackTrace();
+//                    }
 
+                    setText("ipfs init");
                     Process exec = runCmd("init");
-                    exec.waitFor();
-
-                    String result = readStream(exec.getInputStream()) + readStream(exec.getErrorStream());
-                    Log.e("TT", result);
+                    readOutput(exec, 500);
                 } catch (Exception e) {
+                    e.printStackTrace();
+                    setText(e.getMessage());
                 }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressDialog.dismiss();
-                    }
-                });
             }
         }).start();
     }
@@ -255,11 +280,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void downloadFile() throws Exception {
-
         File file = getBinaryFile();
         if (file.exists()) {
             return;
         }
+        setText("copy ipfs binary");
         InputStream myInput;
         OutputStream myOutput = new FileOutputStream(file.getAbsolutePath());
         myInput = this.getAssets().open(getBinaryFileByABI(Build.CPU_ABI));
