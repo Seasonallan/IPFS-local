@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="horizontal_vertical">#8f8f8f</color>
+    <color name="horizontal_divider">#8f8f8f</color>
 </resources>

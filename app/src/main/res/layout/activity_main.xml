@@ -21,67 +21,10 @@
             android:textColor="@color/white" />
     </ScrollView>
 
-    <LinearLayout
+    <Button
+        android:id="@+id/button_start"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="8dp"
-        android:background="@color/white"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/button_init"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="节点初始化" />
-
-            <Button
-                android:id="@+id/button_start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="启动" />
-
-            <Button
-                android:id="@+id/button_version"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="查看节点信息" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/button_add"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="上传测试文件" />
-
-            <Button
-                android:id="@+id/button_cat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="下载测试文件" />
-
-            <Button
-                android:id="@+id/button_pubsub"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="进入聊天室" />
-        </LinearLayout>
-
-    </LinearLayout>
+        android:layout_height="88dp"
+        android:layout_weight="1"
+        android:text="启动IPFS引擎" />
 </LinearLayout>

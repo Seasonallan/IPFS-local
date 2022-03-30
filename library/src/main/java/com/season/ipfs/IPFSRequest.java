@@ -18,8 +18,15 @@ public class IPFSRequest {
         return new String(bytes);
     }
 
+    public static byte[] catBytes(String cid) {
+        return HttpGet.getRequest(ipfsHost + "cat/" + cid);
+    }
+
     public static String id() {
         byte[] bytes = HttpGet.getRequest(ipfsHost + "id");
+        if(bytes == null){
+            return "{}";
+        }
         return new String(bytes);
     }
 

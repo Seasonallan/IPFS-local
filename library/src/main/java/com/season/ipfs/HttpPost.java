@@ -1,5 +1,7 @@
 package com.season.ipfs;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -70,6 +72,7 @@ public class HttpPost {
             dos.writeBytes(PREFIX + BOUNDARY + PREFIX + LINE_END);
             dos.flush();
             dos.close();
+            Log.e("TAG", "response: "+conn.getResponseCode());
             //读取服务器返回信息
             if (conn.getResponseCode() == 200) {
                 InputStream in = conn.getInputStream();

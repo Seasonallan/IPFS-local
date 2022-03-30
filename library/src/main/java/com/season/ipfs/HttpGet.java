@@ -1,5 +1,7 @@
 package com.season.ipfs;
 
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -29,6 +31,7 @@ public class HttpGet {
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Charset", "UTF-8");
 
+            Log.e("TAG", "response: "+conn.getResponseCode());
             //读取服务器返回信息
             if (conn.getResponseCode() == 200) {
                 //得到输入流

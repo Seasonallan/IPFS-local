@@ -2,6 +2,9 @@ package com.season.ipfs_local;
 
 import org.junit.Test;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+
 import static org.junit.Assert.*;
 
 /**
@@ -12,6 +15,11 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
+        String json = "{你好？  中国}";
+        String data = URLEncoder.encode(json);
+        System.out.println(json);
+        System.out.println(data);
+        System.out.println(URLDecoder.decode(data));
         assertEquals(4, 2 + 2);
     }
 }
