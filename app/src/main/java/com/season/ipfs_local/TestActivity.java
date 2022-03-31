@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class MainActivityBackup extends AppCompatActivity {
+public class TestActivity extends AppCompatActivity {
 
     TextView textView;
     ScrollView scrollView;
@@ -98,7 +98,7 @@ public class MainActivityBackup extends AppCompatActivity {
                     public void run() {
                         try {
                             setText("ipfs add test.txt");
-                            String res = IPFSRequest.uploadString(MainActivityBackup.this, "can u see me? no");
+                            String res = IPFSRequest.uploadString(TestActivity.this, "can u see me? no");
                             JSONObject jsonObject = new JSONObject(res);
                             cid = jsonObject.getString("Hash");
                             setText(jsonObject.toString(2));
@@ -160,8 +160,8 @@ public class MainActivityBackup extends AppCompatActivity {
                         }
                     }).start();
                 } else {
-                    final EditText inputServer = new EditText(MainActivityBackup.this);
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivityBackup.this);
+                    final EditText inputServer = new EditText(TestActivity.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(TestActivity.this);
                     builder.setTitle("消息").setIcon(android.R.drawable.ic_dialog_info).setView(inputServer)
                             .setNegativeButton("取消", null);
                     builder.setPositiveButton("发送", new DialogInterface.OnClickListener() {
