@@ -135,9 +135,9 @@ public class MainActivityBackup extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            setText("TT", "run ipfs pubsub sub helloMe");
+                            setText("TT", "run ipfs pubsub sub "+IpfsEngine.TOPIC);
                             try {
-                                chatProcess = runCmd("pubsub sub helloMe");
+                                chatProcess = runCmd("pubsub sub "+IpfsEngine.TOPIC);
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -167,9 +167,9 @@ public class MainActivityBackup extends AppCompatActivity {
                     builder.setPositiveButton("发送", new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int which) {
-                            setText("TT", "run ipfs pubsub pub helloMe " + inputServer.getText().toString());
+                            setText("TT", "run ipfs pubsub pub " + IpfsEngine.TOPIC +" " + inputServer.getText().toString());
                             try {
-                                chatProcess = runCmd("pubsub pub helloMe " + inputServer.getText().toString());
+                                chatProcess = runCmd("pubsub pub " +IpfsEngine.TOPIC +" " + inputServer.getText().toString());
 
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -214,7 +214,7 @@ public class MainActivityBackup extends AppCompatActivity {
         } catch (IllegalThreadStateException e) {
             isAlive = true;
         }
-        Log.e("TT", "isAlive:" + isAlive);
+        //Log.e("TT", "isAlive:" + isAlive);
         return isAlive;
     }
 
@@ -226,7 +226,7 @@ public class MainActivityBackup extends AppCompatActivity {
         if (TextUtils.isEmpty(text)) {
             return;
         }
-        Log.e("TT", text);
+        //Log.e("TT", text);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -322,7 +322,7 @@ public class MainActivityBackup extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("readStream>>" + content);
+        //System.out.println("readStream>>" + content);
         return content;
     }
 

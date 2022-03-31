@@ -22,6 +22,7 @@ import java.util.List;
 
 public class IpfsEngine {
 
+    public static final String TOPIC = "topicChat";
     private static IpfsEngine instance;
     private Context context;
 
@@ -71,7 +72,7 @@ public class IpfsEngine {
         getBinaryFile().setExecutable(true);
         setText("ipfs init");
         Process exec = runCmd("init");
-        if(exec == null){
+        if (exec == null) {
             setText("ipfs init error");
             return;
         }
@@ -82,7 +83,7 @@ public class IpfsEngine {
 
                 setText("TT", "ipfs daemon --enable-pubsub-experiment");
                 daemon = runCmd("daemon --enable-pubsub-experiment");
-                if(daemon == null){
+                if (daemon == null) {
                     setText("ipfs daemon error");
                     return;
                 }
@@ -129,10 +130,10 @@ public class IpfsEngine {
     }
 
     public void startChatProcess() {
-        setText("TT", "run ipfs pubsub sub helloMe");
+        setText("TT", "run ipfs pubsub sub " + IpfsEngine.TOPIC);
 
-        chatProcess = runCmd("pubsub sub helloMe");
-        if(chatProcess == null){
+        chatProcess = runCmd("pubsub sub " + IpfsEngine.TOPIC);
+        if (chatProcess == null) {
             setText("TT", "ipfs pubsub error");
             return;
         }
@@ -151,7 +152,7 @@ public class IpfsEngine {
 
     public void sendChat(ChatModel chatModel) {
         try {
-            runCmd("pubsub pub helloMe " + URLEncoder.encode(chatModel.toJson().toString()));
+            runCmd("pubsub pub " + IpfsEngine.TOPIC + " " + URLEncoder.encode(chatModel.toJson().toString()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -191,7 +192,7 @@ public class IpfsEngine {
         } catch (IllegalThreadStateException e) {
             isAlive = true;
         }
-        Log.e("TT", "isAlive:" + isAlive);
+        //Log.e("TT", "isAlive:" + isAlive);
         return isAlive;
     }
 
@@ -237,7 +238,7 @@ public class IpfsEngine {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("readStream>>" + content);
+       // System.out.println("readStream>>" + content);
         return content;
     }
 

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,6 +82,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                     onIconClick();
                 }
             });
+            if(TextUtils.isEmpty(chatModel.getFileName())){
+                holder.rightFileImageView.setVisibility(View.GONE);
+                holder.rightContentTextView.setVisibility(View.VISIBLE);
+            }else{
+                holder.rightFileImageView.setVisibility(View.VISIBLE);
+                holder.rightContentTextView.setVisibility(View.GONE);
+                holder.rightFileImageView.setImageResource(R.drawable.loading);
+                loadImage(holder.rightFileImageView, chatModel.getContent());
+            }
         } else {
             holder.rightLayout.setVisibility(View.GONE);
             holder.leftLayout.setVisibility(View.VISIBLE);
@@ -97,6 +107,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 }
             });
             loadImage(holder.leftImageView, chatModel.getImgId());
+            if(TextUtils.isEmpty(chatModel.getFileName())){
+                holder.leftFileImageView.setVisibility(View.GONE);
+                holder.leftContentTextView.setVisibility(View.VISIBLE);
+            }else{
+                holder.leftFileImageView.setVisibility(View.VISIBLE);
+                holder.leftContentTextView.setVisibility(View.GONE);
+                holder.leftFileImageView.setImageResource(R.drawable.loading);
+                loadImage(holder.leftFileImageView, chatModel.getContent());
+            }
         }
 
     }
@@ -146,20 +165,24 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         TextView leftNameTextView;
         TextView leftContentTextView;
         LinearLayout leftLayout;
+        ImageView leftFileImageView;
 
         ImageView rightImageView;
         TextView rightNameTextView;
+        ImageView rightFileImageView;
         TextView rightContentTextView;
         LinearLayout rightLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             leftImageView = (ImageView) itemView.findViewById(R.id.left_image);
+            leftFileImageView = (ImageView) itemView.findViewById(R.id.left_file);
             leftContentTextView = (TextView) itemView.findViewById(R.id.left_content);
             leftNameTextView = (TextView) itemView.findViewById(R.id.left_name);
             leftLayout = (LinearLayout) itemView.findViewById(R.id.left_bubble);
 
             rightImageView = (ImageView) itemView.findViewById(R.id.right_image);
+            rightFileImageView = (ImageView) itemView.findViewById(R.id.right_file);
             rightContentTextView = (TextView) itemView.findViewById(R.id.right_content);
             rightNameTextView = (TextView) itemView.findViewById(R.id.right_name);
             rightLayout = (LinearLayout) itemView.findViewById(R.id.right_bubble);
