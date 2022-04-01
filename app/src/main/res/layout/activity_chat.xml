@@ -27,6 +27,13 @@
 
 
             <Button
+                android:id="@+id/set_icon_web"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="个人主页" />
+
+            <Button
                 android:id="@+id/set_icon_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

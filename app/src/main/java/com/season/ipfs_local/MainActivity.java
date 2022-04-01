@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.season.ipfs_local.chat.ChatActivity;
+import com.season.ipfs_local.chat.WebActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

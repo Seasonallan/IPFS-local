@@ -74,6 +74,12 @@ public class ChatActivity extends AppCompatActivity implements IpfsEngine.IDataC
                 showName();
             }
         });
+        findViewById(R.id.set_icon_web).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ChatActivity.this, WebActivity.class));
+            }
+        });
         findViewById(R.id.send_txt_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

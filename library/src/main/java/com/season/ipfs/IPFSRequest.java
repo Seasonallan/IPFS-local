@@ -2,6 +2,7 @@ package com.season.ipfs;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,6 +25,14 @@ public class IPFSRequest {
 
     public static String id() {
         byte[] bytes = HttpGet.getRequest(ipfsHost + "id");
+        if(bytes == null){
+            return "{}";
+        }
+        return new String(bytes);
+    }
+
+    public static String ls(String cid) {
+        byte[] bytes = HttpGet.getRequest(ipfsHost + "ls/"+cid);
         if(bytes == null){
             return "{}";
         }
