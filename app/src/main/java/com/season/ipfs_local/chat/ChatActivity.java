@@ -31,7 +31,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.season.ipfs.IPFSRequest;
-import com.season.ipfs_local.IpfsEngine;
+import com.season.ipfs.IpfsEngine;
 import com.season.ipfs_local.R;
 
 import org.json.JSONException;
@@ -188,7 +188,7 @@ public class ChatActivity extends AppCompatActivity implements IpfsEngine.IDataC
                                         }
                                     });
 
-                                    IpfsEngine.getInstance(getApplicationContext()).sendChat(chatModelSending);
+                                    //IpfsEngine.getInstance(getApplicationContext()).sendChat(chatModelSending);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -329,7 +329,7 @@ public class ChatActivity extends AppCompatActivity implements IpfsEngine.IDataC
                     chatAdapter.notifyItemInserted(chatModelList.size() - 1);
                     recyclerView.scrollToPosition(chatModelList.size() - 1);
 
-                    IpfsEngine.getInstance(getApplicationContext()).sendChat(chatModelSending);
+                    //IpfsEngine.getInstance(getApplicationContext()).sendChat(chatModelSending);
                 } else {
                     Toast.makeText(ChatActivity.this, "Cant be empty！", Toast.LENGTH_SHORT).show();
                 }

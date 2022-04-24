@@ -1,12 +1,9 @@
-package com.season.ipfs_local;
+package com.season.ipfs;
 
 import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
-
-import com.season.ipfs.IPFSRequest;
-import com.season.ipfs_local.chat.ChatModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +13,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,13 +146,6 @@ public class IpfsEngine {
         }
     }
 
-    public void sendChat(ChatModel chatModel) {
-        try {
-            runCmd("pubsub pub " + IpfsEngine.TOPIC + " " + URLEncoder.encode(chatModel.toJson().toString()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public void stop() {
         if (daemon != null) {
@@ -238,7 +227,7 @@ public class IpfsEngine {
         } catch (Exception e) {
             e.printStackTrace();
         }
-       // System.out.println("readStream>>" + content);
+        // System.out.println("readStream>>" + content);
         return content;
     }
 

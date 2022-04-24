@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.season.ipfs.IPFSRequest;
+import com.season.ipfs.IpfsEngine;
 
 import org.json.JSONObject;
 
@@ -135,7 +136,7 @@ public class TestActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            setText("TT", "run ipfs pubsub sub "+IpfsEngine.TOPIC);
+                            setText("TT", "run ipfs pubsub sub "+ IpfsEngine.TOPIC);
                             try {
                                 chatProcess = runCmd("pubsub sub "+IpfsEngine.TOPIC);
                                 runOnUiThread(new Runnable() {

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.season.ipfs.IpfsEngine;
 import com.season.ipfs_local.chat.ChatActivity;
 import com.season.ipfs_local.chat.WebActivity;
 
@@ -42,18 +43,18 @@ public class MainActivity extends AppCompatActivity implements IpfsEngine.IDataC
                             IpfsEngine.getInstance(getApplicationContext()).startV2(new Runnable() {
                                 @Override
                                 public void run() {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            new Handler().postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    startActivity(new Intent(MainActivity.this, ChatActivity.class));
-                                                }
-                                            }, 800);
-                                        }
-                                    });
-                                    IpfsEngine.getInstance(getApplicationContext()).startChatProcess();
+//                                    runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            new Handler().postDelayed(new Runnable() {
+//                                                @Override
+//                                                public void run() {
+//                                                    startActivity(new Intent(MainActivity.this, ChatActivity.class));
+//                                                }
+//                                            }, 800);
+//                                        }
+//                                    });
+                                    //IpfsEngine.getInstance(getApplicationContext()).startChatProcess();
                                 }
                             });
                         } catch (Exception e) {
