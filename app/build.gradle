@@ -41,5 +41,6 @@ dependencies {
     testImplementation "com.squareup.assertj:assertj-android:1.2.0"
 
     implementation project(':library')
+    //implementation 'com.github.Seasonallan:IPFS-local:2.0'
 
 }

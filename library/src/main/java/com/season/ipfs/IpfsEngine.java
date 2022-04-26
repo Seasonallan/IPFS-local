@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -231,7 +232,7 @@ public class IpfsEngine {
         return content;
     }
 
-    Process runCmd(String cmd) {
+    public Process runCmd(String cmd) {
         try {
             String[] env = {"IPFS_PATH=" + getRepoPath().getAbsolutePath()};
             String command = getBinaryFile().getAbsolutePath() + " " + cmd;

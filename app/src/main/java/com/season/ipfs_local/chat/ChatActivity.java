@@ -39,8 +39,10 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ChatActivity extends AppCompatActivity implements IpfsEngine.IDataChange {
 
@@ -83,6 +85,15 @@ public class ChatActivity extends AppCompatActivity implements IpfsEngine.IDataC
         findViewById(R.id.send_txt_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(true){
+                    chatModelSending = new ChatModel(icon, name, new Random().nextLong() +"", new Random().nextBoolean()?ChatModel.SEND:ChatModel.RECEIVE);
+                    chatModelList.add(chatModelSending);
+                    chatAdapter.notifyItemInserted(chatModelList.size() - 1);
+                    recyclerView.scrollToPosition(chatModelList.size() - 1);
+
+                    sendChat(chatModelSending);
+                    return;
+                }
                 addTextPopInput();
             }
         });
@@ -329,7 +340,7 @@ public class ChatActivity extends AppCompatActivity implements IpfsEngine.IDataC
                     chatAdapter.notifyItemInserted(chatModelList.size() - 1);
                     recyclerView.scrollToPosition(chatModelList.size() - 1);
 
-                    //IpfsEngine.getInstance(getApplicationContext()).sendChat(chatModelSending);
+                    sendChat(chatModelSending);
                 } else {
                     Toast.makeText(ChatActivity.this, "Cant be empty！", Toast.LENGTH_SHORT).show();
                 }
@@ -338,6 +349,15 @@ public class ChatActivity extends AppCompatActivity implements IpfsEngine.IDataC
         frameLayout.addView(popInputLayout);
     }
 
+
+
+    public void sendChat(ChatModel chatModel) {
+        try {
+            IpfsEngine.getInstance(getApplicationContext()).runCmd("pubsub pub helloMe " + URLEncoder.encode(chatModel.toJson().toString()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void onBackPressed() {
